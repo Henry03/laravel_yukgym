@@ -6,6 +6,7 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 use Illuminate\Support\Facades\Gate;
 use Laravel\Passport\Passport;
 
+
 class AuthServiceProvider extends ServiceProvider
 {
     /**
@@ -26,6 +27,11 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        // Passport::routes();
+        // VerifyEmail::toMailUsing(function ($notifiable, $url) {
+        //     return (new MailMessage)
+        //         ->subject('Verify Email Address')
+        //         ->line('Please click the button below to verify your email address.')
+        //         ->action('Verify Email Address', $url);
+        // });
     }
 }

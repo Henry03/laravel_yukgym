@@ -29,15 +29,15 @@ class UserController extends Controller
     public function store(Request $request){
         $storeData = $request->all();
         $validate = Validator::make($storeData, [
-            'username' => 'required',
-            'notelp' => 'required',
+            'username' => 'required|unique:users',
+            'notelp' => 'required|min:10|max:13',
             'email' => 'required',
             'birthdate' => 'required',
             'password' => 'required',
         ]);
 
         if($validate->fails())
-            return response(['message' => $validate->errors()], 400);
+            return response(['message' => $validate->error_get_last()], 400);
 
         $user = User::create($storeData); // Membuat sebuah data user
         return response([
@@ -63,6 +63,23 @@ class UserController extends Controller
         ], 404);
     }
 
+    public function fingerprintStatus($id)   // Method search atau menampilkan sebuah data user
+    {
+        $user = User::find($id); // Mencari data user berdasarkan id
+        $status = $user->fingerprint;
+        if(!is_null($user)){
+            return response([
+                'message' => 'Retrieve User Success',
+                'data' => $status
+            ], 200);
+        }
+        
+        return response([
+            'message' => 'User Not Found',
+            'data' => null
+        ], 404);
+    }
+
     public function update(Request $request, $id)   // Method update atau mengubah sebuah data user
     {
         $user = User::find($id);
@@ -77,18 +94,52 @@ class UserController extends Controller
         $updateData = $request->all();
         $validate = Validator::make($updateData, [
             'username' => 'required',
-            'notelp' => 'required',
-            'email' => 'required',
+            'notelp' => 'required|min:10|max:13',
+            'email' => 'required|email:rfc,dns ',
             'birthdate' => 'required'
         ]);
 
         if($validate->fails())
-            return response(['message' => $validate->errors()], 400);
+            return response(['message'=>$validate->errors()->first(), 'errors'=> $validate->errors()], 400);
 
         $user->username = $updateData['username'];
         $user->notelp = $updateData['notelp'];
         $user->email = $updateData['email'];
         $user->birthdate = $updateData['birthdate'];
+
+        if($user->save()){
+            return response([
+                'message' => 'Update User Success',
+                'data' => $user
+            ], 200);
+        }
+
+        return response([
+            'message' => 'Update User Failed',
+            'data' => null
+        ], 400);
+    }
+
+    public function updateFingerprint(Request $request, $id)   // Method update atau mengubah sebuah data user
+    {
+        $user = User::find($id);
+
+        if(is_null($user)){
+            return response([
+                'message' => 'User Not Found',
+                'data' => null
+            ], 404);
+        }
+
+        $updateData = $request->all();
+        $validate = Validator::make($updateData, [
+            'fingerprint' => 'required',
+        ]);
+
+        if($validate->fails())
+            return response(['message' => $validate->errors()], 400);
+
+        $user->fingerprint = $updateData['fingerprint'];
 
         if($user->save()){
             return response([

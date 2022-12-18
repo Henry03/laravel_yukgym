@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 
-class user extends Authenticatable
+class user extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -23,6 +23,8 @@ class user extends Authenticatable
         'email',
         'birthdate',
         'password',
+        'fingerprint',
+        'image',
     ];
 
     /**

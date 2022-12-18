@@ -20,6 +20,9 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->date('birthdate');
             $table->string('password');
+            $table->integer('fingerprint');
+            $table->string('image');
+            $table->timestamp('email_verified_at')->nullable();
             $table->timestamps();
         });
     }

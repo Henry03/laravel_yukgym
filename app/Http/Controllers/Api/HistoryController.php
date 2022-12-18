@@ -10,10 +10,11 @@ use App\Models\History;
 
 class HistoryController extends Controller
 {
+    
 
     public function index($user_id){
         // get posts
-        $history = History::where('user_id', $user_id)->latest('tanggal')->get();
+        $history = History::where('user_id', $user_id)->orderBy('tanggal','asc')->get();
         
         if(count($history) > 0){
             return response([
@@ -56,7 +57,7 @@ class HistoryController extends Controller
         ]);
 
         if($validate->fails())
-            return response(['message' => $validate->errors()], 400);
+            return response(['message' => $validate->errors()->first(),'errors' => $validate->errors()], 400);
 
         $history = History::create($storeData); // Membuat sebuah data history
         return response([
